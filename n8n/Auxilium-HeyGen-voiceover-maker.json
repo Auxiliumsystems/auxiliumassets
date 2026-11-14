@@ -1,0 +1,173 @@
+{
+  "name": "Auxilium – HeyGen voiceover maker",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "minutes", "minutesInterval": 10 } ] }
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000001",
+      "name": "Every 10 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "s1", "name": "heygenVoiceId", "value": "PASTE_YOUR_HEYGEN_VOICE_ID_HERE", "type": "string" },
+            { "id": "s2", "name": "speed", "value": 1.05, "type": "number" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000002",
+      "name": "Settings (your voice)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/Auxiliumsystems/auxiliumassets/main/library/vo-queue.json?t={{ $now.toMillis() }}",
+        "options": { "response": { "response": { "responseFormat": "json" } } }
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000003",
+      "name": "Read voiceover queue from GitHub",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [400, 0]
+    },
+    {
+      "parameters": { "fieldToSplitOut": "items", "options": {} },
+      "id": "b2f0c001-0000-4000-8000-000000000004",
+      "name": "One item per script",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [600, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.github.com/repos/Auxiliumsystems/auxiliumassets/contents/' + $json.path }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/vnd.github+json" },
+            { "name": "User-Agent", "value": "auxilium-n8n" }
+          ]
+        },
+        "options": { "response": { "response": { "fullResponse": true, "neverError": true } } }
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000005",
+      "name": "Audio already made?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, 0],
+      "credentials": { "httpHeaderAuth": { "id": "", "name": "GitHub token" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 404,
+              "operator": { "type": "number", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000006",
+      "name": "Not made yet",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1000, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.heygen.com/v3/voices/speech",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $('One item per script').item.json.text, voice_id: $('One item per script').item.json.voiceId || $('Settings (your voice)').first().json.heygenVoiceId, speed: $('Settings (your voice)').first().json.speed }) }}",
+        "options": {}
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000007",
+      "name": "HeyGen: speak the script",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, -100],
+      "credentials": { "httpHeaderAuth": { "id": "", "name": "HeyGen API key" } }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data ? $json.data.audio_url : $json.audio_url }}",
+        "options": { "response": { "response": { "responseFormat": "file", "outputPropertyName": "data" } } }
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000008",
+      "name": "Download the audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1400, -100]
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "data",
+        "destinationKey": "b64",
+        "options": {}
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000009",
+      "name": "Audio to text (base64)",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [1600, -100]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ 'https://api.github.com/repos/Auxiliumsystems/auxiliumassets/contents/' + $('One item per script').item.json.path }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/vnd.github+json" },
+            { "name": "User-Agent", "value": "auxilium-n8n" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message: 'Add voiceover ' + $('One item per script').item.json.path, content: $json.b64, branch: 'main' }) }}",
+        "options": {}
+      },
+      "id": "b2f0c001-0000-4000-8000-000000000010",
+      "name": "Save audio to GitHub",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1800, -100],
+      "credentials": { "httpHeaderAuth": { "id": "", "name": "GitHub token" } }
+    }
+  ],
+  "connections": {
+    "Every 10 minutes": { "main": [[{ "node": "Settings (your voice)", "type": "main", "index": 0 }]] },
+    "Settings (your voice)": { "main": [[{ "node": "Read voiceover queue from GitHub", "type": "main", "index": 0 }]] },
+    "Read voiceover queue from GitHub": { "main": [[{ "node": "One item per script", "type": "main", "index": 0 }]] },
+    "One item per script": { "main": [[{ "node": "Audio already made?", "type": "main", "index": 0 }]] },
+    "Audio already made?": { "main": [[{ "node": "Not made yet", "type": "main", "index": 0 }]] },
+    "Not made yet": { "main": [[{ "node": "HeyGen: speak the script", "type": "main", "index": 0 }], []] },
+    "HeyGen: speak the script": { "main": [[{ "node": "Download the audio", "type": "main", "index": 0 }]] },
+    "Download the audio": { "main": [[{ "node": "Audio to text (base64)", "type": "main", "index": 0 }]] },
+    "Audio to text (base64)": { "main": [[{ "node": "Save audio to GitHub", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}
