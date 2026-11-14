@@ -1,0 +1,9 @@
+{
+  "note": "Voiceover queue read by the n8n workflow 'Auxilium – HeyGen voiceover maker'. Each item: path = where the audio is saved in this repo, text = the script. n8n skips items whose audio already exists.",
+  "items": [
+    {
+      "path": "library/test/vo-test.mp3",
+      "text": "Thirty-four free trials last month. Eleven never got a call back. That's the gap. Here's how to close it."
+    }
+  ]
+}
