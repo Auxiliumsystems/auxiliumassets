@@ -1,0 +1,10 @@
+{
+  "note": "Upload queue read by the n8n workflow 'Auxilium – GitHub to GHL media sync'. Each item is uploaded once to GHL media storage (Auxilium sub-account) as a real copy. Names must be unique, lowercase, hyphens, no spaces.",
+  "items": [
+    {
+      "path": "library/test/pipeline-test-34-trials.mp4",
+      "name": "pipeline-test-34-trials.mp4",
+      "parentId": "6af7b8a9ee7b01bee2c41534"
+    }
+  ]
+}
