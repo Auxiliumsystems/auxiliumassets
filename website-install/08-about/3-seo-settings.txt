@@ -1,0 +1,14 @@
+PAGE URL PATH: /about
+
+SEO TITLE (48 chars):
+About Auxilium and founder Rob Whelan | Auxilium
+
+META DESCRIPTION (142 chars):
+Auxilium was founded in Dublin by Rob Whelan after six years helping Irish gyms with retention, and seeing how many enquiries went unanswered.
+
+KEYWORDS:
+Auxilium Dublin, Rob Whelan, gym consultant Ireland, gym customer experience
+
+SOCIAL IMAGE: upload og-image.png
+LANGUAGE: en-IE
+CANONICAL: https://www.auxiliumsystems.com/about

@@ -1,0 +1,14 @@
+PAGE URL PATH: / (set as the website's home page)
+
+SEO TITLE (52 chars):
+Auxilium | 24/7 enquiry response for gyms in Ireland
+
+META DESCRIPTION (151 chars):
+Auxilium replies to every gym enquiry in seconds, 24/7, asks a few quick questions, books the visit and briefs your coach. Done for you. Live in weeks.
+
+KEYWORDS:
+AI receptionist for gyms, gym enquiry management, gym lead follow up, speed to lead gyms, gym booking assistant Ireland
+
+SOCIAL IMAGE: upload og-image.png
+LANGUAGE: en-IE
+CANONICAL: https://www.auxiliumsystems.com/

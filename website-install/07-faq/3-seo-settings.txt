@@ -1,0 +1,14 @@
+PAGE URL PATH: /faq
+
+SEO TITLE (45 chars):
+FAQ: AI enquiry assistant for gyms | Auxilium
+
+META DESCRIPTION (133 chars):
+Answers on how Auxilium replies to gym enquiries 24/7, AI disclosure under the EU AI Act, GDPR, setup time, CRM handover and pricing.
+
+KEYWORDS:
+gym chatbot Ireland, AI receptionist gym questions, EU AI Act chatbot disclosure gym, gym lead response time
+
+SOCIAL IMAGE: upload og-image.png
+LANGUAGE: en-IE
+CANONICAL: https://www.auxiliumsystems.com/faq
